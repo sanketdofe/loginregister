@@ -191,6 +191,7 @@ export default function Login() {
                 <div>
                     <Button size="small" variant='outlined' onClick={handleLogin} className={classes.button} style={{margin: '20px 15px',fontWeight: 600, backgroundColor: '#34656d',color: "#FFFFFF"}}>Login</Button>
                     <Button size="small" variant='outlined' onClick={handleReset} className={classes.button} style={{margin: '20px 15px',color: "#34656d",fontWeight: 600}}>Reset</Button>
+                    <Button size="small" variant='outlined' onClick={() => navigate("/forgotpwd")} className={classes.button} style={{margin: '0 15px 20px',color: "#34656d",fontWeight: 600}}>Forgot Password</Button>
                 </div>
             </FormControl>
         </div>
