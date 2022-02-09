@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 let serveraddress = "http://localhost:5000";
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
     root: {
         display: 'flex',
         justifyContent: 'center',
@@ -33,9 +33,9 @@ const useStyles = makeStyles((theme) => ({
     },
     textfield: {
         fontColor:"#34656d",
-        margin: "3px 0"
+        margin: "8px 0"
     }
-  }));
+  });
 export default function Login() {
     const [loggedIn, setLoggedIn] = React.useState(sessionStorage.getItem("accesstoken") !== null);
     const [tabactive, setTabactive] = React.useState(true);
@@ -44,7 +44,7 @@ export default function Login() {
         email: "",
         password: "",
         reenteredpassword: "",
-        dob: ""
+        dob: null
     });
     const classes = useStyles();
     const navigate = useNavigate();
@@ -60,7 +60,7 @@ export default function Login() {
             email: "",
             password: "",
             reenteredpassword: "",
-            dob: ""
+            dob: null
         });
     }, [loggedIn, navigate]);
 
@@ -76,7 +76,7 @@ export default function Login() {
             email: "",
             password: "",
             reenteredpassword: "",
-            dob: ""
+            dob: null
         });
     };
 
@@ -102,7 +102,7 @@ export default function Login() {
                 alert(res.data.message);
                 handleReset();
             }
-            else if(res.data.message === "User Registered Successfully"){
+            else if(res.data.message === "User Added Successfully"){
                 alert(res.data.message);
                 setTabactive(true);
                 handleReset();
@@ -152,15 +152,16 @@ export default function Login() {
 
     const RegisterForm = (
         <div>
-            <FormControl required component="fieldset" className={classes.formControl}>
-                <TextField className={classes.textfield} value={state.name} onChange={handleChange} required name="name" label="Name" />
-                <TextField className={classes.textfield} value={state.email} onChange={handleChange} required type="email" name="email" label="Email" />
-                <TextField className={classes.textfield} value={state.password} onChange={handleChange} required type="password" name="password" label="Password" />
-                <TextField className={classes.textfield} value={state.reenteredpassword} onChange={handleChange} required type="password" name="reenteredpassword" label="Reenter Password" />
+            <FormControl required component="fieldset" className={classes.formControl} sx={{w: 9/10}}>
+                <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={state.name} onChange={handleChange} required name="name" label="Name" />
+                <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={state.email} onChange={handleChange} required type="email" name="email" label="Email" />
+                <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={state.password} onChange={handleChange} required type="password" name="password" label="Password" />
+                <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "16px 0"}} value={state.reenteredpassword} onChange={handleChange} required type="password" name="reenteredpassword" label="Reenter Password" />
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
+                        style={{fontColor:"#34656d",margin: "8px 0"}}
                         disableFuture
-                        label="Responsive"
+                        label="Date Of Birth"
                         openTo="year"
                         views={['year', 'month', 'day']}
                         value={state.dob}
@@ -174,8 +175,8 @@ export default function Login() {
                     />
                 </LocalizationProvider>
                 <div>
-                    <Button size="small" variant='outlined' onClick={handleRegister} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Sign Up</Button>
-                    <Button size="small" variant='outlined' onClick={handleReset} className={classes.button} >Reset</Button>
+                    <Button size="small" variant='outlined' onClick={handleRegister} className={classes.button} style={{margin: '20px 15px',fontWeight: 600, backgroundColor: '#34656d',color: "#FFFFFF"}}>Sign Up</Button>
+                    <Button size="small" variant='outlined' onClick={handleReset} className={classes.button} style={{margin: '20px 15px',color: "#34656d",fontWeight: 600}}>Reset</Button>
                 </div>
             </FormControl>
         </div>
@@ -184,12 +185,12 @@ export default function Login() {
 
     const LoginForm = (
         <div>
-            <FormControl required component="fieldset" className={classes.formControl}>
-                <TextField className={classes.textfield} value={state.email} onChange={handleChange} required type="email" name="email" label="Email" />
-                <TextField className={classes.textfield} value={state.password} onChange={handleChange} required type="password" name="password" label="Password" />
+            <FormControl required component="fieldset" className={classes.formControl} sx={{w: 9/10}}>
+                <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={state.email} onChange={handleChange} required type="email" name="email" label="Email" />
+                <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={state.password} onChange={handleChange} required type="password" name="password" label="Password" />
                 <div>
-                    <Button size="small" variant='outlined' onClick={handleLogin} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Login</Button>
-                    <Button size="small" variant='outlined' onClick={handleReset} className={classes.button} >Reset</Button>
+                    <Button size="small" variant='outlined' onClick={handleLogin} className={classes.button} style={{margin: '20px 15px',fontWeight: 600, backgroundColor: '#34656d',color: "#FFFFFF"}}>Login</Button>
+                    <Button size="small" variant='outlined' onClick={handleReset} className={classes.button} style={{margin: '20px 15px',color: "#34656d",fontWeight: 600}}>Reset</Button>
                 </div>
             </FormControl>
         </div>
@@ -199,13 +200,17 @@ export default function Login() {
         <>
         {
             !loggedIn ? 
-            <div className={classes.root}>
+            <div className={classes.root} style={{
+                display: 'flex',
+                justifyContent: 'center',
+                margin: '10% 0'
+            }}>
                 <Card style={{padding: '20px'}}>
                     <div style={{textAlign: 'center'}}>
                         <h2 style={{textTransform:'uppercase', color: '#34656d'}}>{state.role}</h2>
                         <hr />
-                        <Button size="large" className={classes.switchbutton} onClick={() =>setTabactive(true)} disabled={tabactive}>Login</Button>
-                        <Button size="large" className={classes.switchbutton} onClick={() => setTabactive(false)} disabled={!tabactive}>Register</Button>
+                        <Button size="large" className={classes.switchbutton} style={{color: !tabactive ? "#34656d" : "#808080", fontWeight: 600, fontSize: '18px', margin: '0 30px'}} onClick={() =>setTabactive(true)} disabled={tabactive}>Login</Button>
+                        <Button size="large" className={classes.switchbutton} style={{color: tabactive ? "#34656d" : "#808080", fontWeight: 600, fontSize: '18px', margin: '0 30px'}} onClick={() => setTabactive(false)} disabled={!tabactive}>Register</Button>
                         <hr />
                         {tabactive ? LoginForm : RegisterForm}
                     </div>

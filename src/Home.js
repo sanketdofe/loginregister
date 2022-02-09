@@ -5,6 +5,8 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import DatePicker from '@mui/lab/DatePicker';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
@@ -89,8 +91,11 @@ export default function Home() {
         else if(user.name === ''){
             alert("Name cannot be empty");
         }
+        else if(user.dob === null){
+            alert("DOB cannot be empty");
+        }
         else{
-            axios.put(serveraddress+"/api/user/updateuser", {email: user.email, name: user.name}, { headers: {authorization: "Bearer " + accesstoken}})
+            axios.put(serveraddress+"/api/user/updateuser", {email: user.email, name: user.name, dob: user.dob}, { headers: {authorization: "Bearer " + accesstoken}})
             .then(res => {
                 // console.log(res);
                 if(res.data.message === 'jwt expired' || res.data.message === 'Access token required'){
@@ -103,7 +108,7 @@ export default function Home() {
                 }
                 else if(res.data.message === 'Update Successful'){
                     alert(res.data.message);
-                    navigate('/home');
+                    setViewing(true);
                 }
             })
             .catch(err => {console.error(err)});
@@ -155,44 +160,72 @@ export default function Home() {
         }
     };
 
+    function handleLogout(e){
+        sessionStorage.removeItem("accesstoken");
+        sessionStorage.removeItem("name");
+        sessionStorage.removeItem("userid");
+        setLoggedIn(accesstoken !== null);
+        navigate('/');
+    }
     const nameemail = 
         <div>
-            <TextField disabled={viewing} className={classes.textfield} value={user.name} onChange={handleChange} required name="name" label="Name" />
-            <TextField disabled={viewing} className={classes.textfield} value={user.email} onChange={handleChange} required type="email" name="email" label="Email" />
+            <TextField disabled={viewing} className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={user.name} onChange={handleChange} required name="name" label="Name" />
+            <TextField disabled={viewing} className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0 16px"}} value={user.email} onChange={handleChange} required type="email" name="email" label="Email" />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                    disableFuture
+                    disabled={viewing}
+                    label="Date Of Birth"
+                    openTo="year"
+                    views={['year', 'month', 'day']}
+                    value={user.dob}
+                    onChange={(newValue) => {
+                        setUser({ 
+                            ...user,
+                            dob: newValue
+                        });
+                    }}
+                    renderInput={(params) => <TextField {...params} />}
+                />
+            </LocalizationProvider>
         </div>
 
     const updatepassworddata = 
         <div>
-            <TextField className={classes.textfield} value={user.password} onChange={handleChange} required type="password" name="password" label="Current Password" />
-            <TextField className={classes.textfield} value={user.newpassword} onChange={handleChange} required type="password" name="newpassword" label="New Password" />
-            <TextField className={classes.textfield} value={user.reenterednewpassword} onChange={handleChange} required type="password" name="reenterednewpassword" label="Reenter New Password" />
+            <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={user.password} onChange={handleChange} required type="password" name="password" label="Current Password" />
+            <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={user.newpassword} onChange={handleChange} required type="password" name="newpassword" label="New Password" />
+            <TextField className={classes.textfield} style={{fontColor:"#34656d",margin: "8px 0"}} value={user.reenterednewpassword} onChange={handleChange} required type="password" name="reenterednewpassword" label="Reenter New Password" />
         </div>
 
     const viewinguserbutton = 
         <div>
-            <Button size="small" variant='outlined' onClick={() => setViewing(false)} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Edit</Button>
-            <Button size="small" variant='outlined' onClick={() => navigate('/')} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Go Home</Button>
+            <Button size="small" variant='outlined' onClick={() => setViewing(false)} className={classes.button} style={{margin: '20px 15px',fontWeight: 600, backgroundColor: '#34656d',color: "#FFFFFF"}}>Edit</Button>
+            <Button size="small" variant='outlined' onClick={handleLogout} className={classes.button} style={{margin: '20px 15px',color: "#34656d",fontWeight: 600}}>Logout</Button>
         </div>
     
     const editinguserbutton = 
         <div>
-            <Button size="small" variant='outlined' onClick={handleUpdate} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Update</Button>
-            <Button size="small" variant='outlined' onClick={() => setUpdatepassword(true)} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Update Password</Button>
-            <Button size="small" variant='outlined' onClick={() => {setViewing(true); setUpdatepassword(false)}} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Cancel</Button>
+            <Button size="small" variant='outlined' onClick={handleUpdate} className={classes.button} style={{margin: '20px 15px',fontWeight: 600, backgroundColor: '#34656d',color: "#FFFFFF"}}>Update</Button>
+            <Button size="small" variant='outlined' onClick={() => setUpdatepassword(true)} className={classes.button} style={{margin: '20px 15px',fontWeight: 600, backgroundColor: '#34656d',color: "#FFFFFF"}}>Update Password</Button>
+            <Button size="small" variant='outlined' onClick={() => {setViewing(true); setUpdatepassword(false)}} className={classes.button} style={{margin: '20px 15px',color: "#34656d",fontWeight: 600}}>Cancel</Button>
         </div>
 
     const passwordupdatebutton = 
         <div>
-            <Button size="small" variant='outlined' onClick={handleUpdatePassword} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Update</Button>
-            <Button size="small" variant='outlined' onClick={() => {setUpdatepassword(false)}} className={classes.button} style={{backgroundColor: '#34656d',color: "#FFFFFF"}}>Cancel</Button>
+            <Button size="small" variant='outlined' onClick={handleUpdatePassword} className={classes.button} style={{margin: '20px 15px',fontWeight: 600, backgroundColor: '#34656d',color: "#FFFFFF"}}>Update</Button>
+            <Button size="small" variant='outlined' onClick={() => {setUpdatepassword(false)}} className={classes.button} style={{margin: '20px 15px',color: "#34656d",fontWeight: 600}}>Cancel</Button>
         </div>
     
     return (
-        <div className={classes.root}>
+        <div className={classes.root} style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '10% 0'
+        }}>
             <Card style={{padding: '20px'}}>
                 <h1 className={classes.heading}>{user.name}'s Profile</h1>
                 <div style={{textAlign: 'center'}}>
-                    <FormControl required component="fieldset" className={classes.formControl}>
+                    <FormControl required component="fieldset" className={classes.formControl} sx={{w: 9/10}}>
                         {updatepassword ? updatepassworddata: nameemail}
                         {viewing ? viewinguserbutton : (updatepassword ? passwordupdatebutton : editinguserbutton)}
                     </FormControl>
